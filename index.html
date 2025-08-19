@@ -2,7 +2,6 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Speech App - ฟีเจอร์เจ๋งขั้นสุด</title>
 
 <!-- PWA -->
@@ -79,7 +78,7 @@ h1 { color: #333; margin-bottom: 20px; text-shadow: 1px 1px 2px #fff; }
     <p>หิวน้ำ</p>
   </div>
   <div class="btn" onclick="queueSpeak('อยากเข้าห้องน้ำ')">
-    <img src="https://i.postimg.cc/KzWrJ4Wj/1755590953378.jpg" alt="อยากเข้าห้องน้ำ">
+    <img src="https://i.postimg.cc/jd1XXbcg/Screenshot-2025-08-19-17-39-39-903-com-miui-gallery-edit.jpg" alt="อยากเข้าห้องน้ำ">
     <p>อยากเข้าห้องน้ำ</p>
   </div>
   <div class="btn" onclick="queueSpeak('ง่วงนอน')">
@@ -96,17 +95,16 @@ h1 { color: #333; margin-bottom: 20px; text-shadow: 1px 1px 2px #fff; }
 </div>
 
 <script>
-// พูดตามลำดับ
 let speakQueue = [];
 let speaking = false;
 
+// Queue Speak
 function queueSpeak(text) {
   speakQueue.push(text);
   if(!speaking) processQueue();
 }
-
 function processQueue() {
-  if(speakQueue.length === 0) { speaking = false; return; }
+  if (speakQueue.length === 0) { speaking = false; return; }
   speaking = true;
   const text = speakQueue.shift();
   const utter = new SpeechSynthesisUtterance(text);
@@ -152,23 +150,23 @@ function addCustomButton() {
 function animateBtn(btn) {
   btn.style.transform = "scale(1.2)";
   btn.style.boxShadow = "0 10px 20px rgba(0,0,0,0.4), 0 0 15px rgba(255,255,255,0.5) inset";
-  setTimeout(() => { 
-    btn.style.transform = "scale(1)"; 
-    btn.style.boxShadow="0 6px 12px rgba(0,0,0,0.2),0 0 10px rgba(255,255,255,0.2) inset"; 
-  }, 200);
+  setTimeout(() => { btn.style.transform = "scale(1)"; btn.style.boxShadow="0 6px 12px rgba(0,0,0,0.2),0 0 10px rgba(255,255,255,0.2) inset"; }, 200);
 }
 
-// เอฟเฟกต์ปุ่มเดิม
+// เพิ่มเอฟเฟกต์ปุ่มพื้นฐาน
 document.querySelectorAll(".btn").forEach(btn=>{
   btn.addEventListener("click", ()=> animateBtn(btn));
 });
+</script>
 
-// Service Worker
+<!-- Service Worker -->
+<script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log('SW registered'))
     .catch(err => console.error(err));
 }
 </script>
+
 </body>
 </html>
