@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speech App - PWA</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#22d3ee">
+
+<style>
+body {
+  font-family: "Tahoma", sans-serif;
+  text-align: center;
+  background: linear-gradient(135deg, #a2d2ff, #ffc8dd);
+  margin: 0;
+  padding: 20px;
+}
+h1 { color: #333; margin-bottom: 20px; text-shadow: 1px 1px 2px #fff; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 25px;
+  max-width: 700px;
+  margin: auto;
+  padding: 10px;
+}
+.btn {
+  background: linear-gradient(145deg, #fff, #f0f0f0);
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 10px rgba(255,255,255,0.2) inset;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  position: relative;
+}
+.btn:hover { transform: scale(1.05); box-shadow: 0 8px 15px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.4) inset; }
+.btn img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn p {
+  margin: 10px 0 0;
+  font-weight: bold;
+  color: #444;
+  text-shadow: 1px 1px 2px #fff;
+}
+.delete-btn {
+  position: absolute; top: 2px; right: 2px;
+  background: red; color: white; border: none;
+  border-radius: 50%; width: 20px; height: 20px;
+  font-size: 14px; cursor: pointer;
+}
+.add-section { margin-top: 30px; }
+</style>
+</head>
+<body>
+
+<h1>🗣️ แอปช่วยพูด PWA</h1>
+
+<div class="grid" id="buttonGrid">
+  <div class="btn" onclick="queueSpeak('สวัสดี')">
+    <img src="https://i.postimg.cc/43Vmrynn/1755590954026.jpg" alt="สวัสดี">
+    <p>สวัสดี</p>
+  </div>
+  <div class="btn" onclick="queueSpeak('ขอบคุณ')">
+    <img src="https://i.postimg.cc/HnZxQ7vv/1755590954073.jpg" alt="ขอบคุณ">
+    <p>ขอบคุณ</p>
+  </div>
+  <div class="btn" onclick="queueSpeak('หิวข้าว')">
+    <img src="https://i.postimg.cc/QdV6kGCf/1755590953971.jpg" alt="หิวข้าว">
+    <p>หิวข้าว</p>
+  </div>
+  <div class="btn" onclick="queueSpeak('หิวน้ำ')">
+    <img src="https://i.postimg.cc/c4zCCwnr/1755590953918.jpg" alt="หิวน้ำ">
+    <p>หิวน้ำ</p>
+  </div>
+  <div class="btn" onclick="queueSpeak('อยากเข้าห้องน้ำ')">
+    <img src="https://i.postimg.cc/KzWrJ4Wj/1755590953378.jpg" alt="อยากเข้าห้องน้ำ">
+    <p>อยากเข้าห้องน้ำ</p>
+  </div>
+  <div class="btn" onclick="queueSpeak('ง่วงนอน')">
+    <img src="https://i.postimg.cc/v8JHdbFV/file-00000000000061f7a3509f32dfcc86f5.png" alt="ง่วงนอน">
+    <p>ง่วงนอน</p>
+  </div>
+</div>
+
+<div class="add-section">
+<h2>➕ เพิ่มปุ่มเอง</h2>
+<input type="file" id="imageUpload" accept="image/*"><br><br>
+<input type="text" id="customText" placeholder="ใส่ข้อความที่จะพูด"><br><br>
+<button onclick="addCustomButton()">เพิ่มปุ่ม</button>
+</div>
+
+<script>
+let speakQueue = [];
+let speaking = false;
+
+// Queue Speak
+function queueSpeak(text) {
+  speakQueue.push(text);
+  if(!speaking) processQueue();
+}
+function processQueue() {
+  if(speakQueue.length === 0) { speaking = false; return; }
+  speaking = true;
+  const text = speakQueue.shift();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "th-TH";
+  utter.onend = processQueue;
+  speechSynthesis.speak(utter);
+}
+
+// เพิ่มปุ่มเอง
+function addCustomButton() {
+  const text = document.getElementById("customText").value;
+  const file = document.getElementById("imageUpload").files[0];
+  if(!text || !file) return alert("กรุณาใส่ข้อความและเลือกรูป");
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const grid = document.getElementById("buttonGrid");
+    const newBtn = document.createElement("div");
+    newBtn.className = "btn";
+    newBtn.onclick = () => { queueSpeak(text); animateBtn(newBtn); };
+
+    const img = document.createElement("img");
+    img.src = e.target.result;
+    img.alt = text;
+
+    const label = document.createElement("p");
+    label.textContent = text;
+
+    const delBtn = document.createElement("button");
+    delBtn.className = "delete-btn";
+    delBtn.innerHTML = "×";
+    delBtn.onclick = (event) => { event.stopPropagation(); newBtn.remove(); };
+
+    newBtn.appendChild(delBtn);
+    newBtn.appendChild(img);
+    newBtn.appendChild(label);
+    grid.appendChild(newBtn);
+  };
+  reader.readAsDataURL(file);
+}
+
+// เอฟเฟกต์ปุ่ม
+function animateBtn(btn) {
+  btn.style.transform = "scale(1.2)";
+  btn.style.boxShadow = "0 10px 20px rgba(0,0,0,0.4), 0 0 15px rgba(255,255,255,0.5) inset";
+  setTimeout(() => { btn.style.transform = "scale(1)"; btn.style.boxShadow="0 6px 12px rgba(0,0,0,0.2),0 0 10px rgba(255,255,255,0.2) inset"; }, 200);
+}
+
+// เพิ่มเอฟเฟกต์ปุ่มพื้นฐาน
+document.querySelectorAll(".btn").forEach(btn=>{
+  btn.addEventListener("click", ()=> animateBtn(btn));
+});
+
+// Register Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log('SW registered'))
+    .catch(err => console.error(err));
+}
+</script>
+</body>
+</html>
