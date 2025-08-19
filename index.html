@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Speech App - PWA</title>
+<title>Speech App - ฟีเจอร์เจ๋งขั้นสุด</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -59,8 +59,7 @@ h1 { color: #333; margin-bottom: 20px; text-shadow: 1px 1px 2px #fff; }
 </style>
 </head>
 <body>
-
-<h1>🗣️ แอปช่วยพูด PWA</h1>
+<h1>🗣️ แอปช่วยพูดเจ๋งขั้นสุด</h1>
 
 <div class="grid" id="buttonGrid">
   <div class="btn" onclick="queueSpeak('สวัสดี')">
@@ -97,14 +96,15 @@ h1 { color: #333; margin-bottom: 20px; text-shadow: 1px 1px 2px #fff; }
 </div>
 
 <script>
+// พูดตามลำดับ
 let speakQueue = [];
 let speaking = false;
 
-// Queue Speak
 function queueSpeak(text) {
   speakQueue.push(text);
   if(!speaking) processQueue();
 }
+
 function processQueue() {
   if(speakQueue.length === 0) { speaking = false; return; }
   speaking = true;
@@ -152,15 +152,18 @@ function addCustomButton() {
 function animateBtn(btn) {
   btn.style.transform = "scale(1.2)";
   btn.style.boxShadow = "0 10px 20px rgba(0,0,0,0.4), 0 0 15px rgba(255,255,255,0.5) inset";
-  setTimeout(() => { btn.style.transform = "scale(1)"; btn.style.boxShadow="0 6px 12px rgba(0,0,0,0.2),0 0 10px rgba(255,255,255,0.2) inset"; }, 200);
+  setTimeout(() => { 
+    btn.style.transform = "scale(1)"; 
+    btn.style.boxShadow="0 6px 12px rgba(0,0,0,0.2),0 0 10px rgba(255,255,255,0.2) inset"; 
+  }, 200);
 }
 
-// เพิ่มเอฟเฟกต์ปุ่มพื้นฐาน
+// เอฟเฟกต์ปุ่มเดิม
 document.querySelectorAll(".btn").forEach(btn=>{
   btn.addEventListener("click", ()=> animateBtn(btn));
 });
 
-// Register Service Worker
+// Service Worker
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log('SW registered'))
