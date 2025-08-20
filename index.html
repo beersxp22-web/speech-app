@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗣️ แอปช่วยพูด</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#22d3ee">
+<style>
+body {
+  font-family: sans-serif;
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #a5f3fc, #fbcfe8);
+}
+h1 {
+  margin-bottom: 20px;
+  font-size: 2.2em;
+  font-weight: bold;
+  background: linear-gradient(90deg, #22d3ee, #f472b6, #facc15);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+  animation: hueShift 5s infinite linear;
+}
+@keyframes hueShift { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
+
+.button-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.speech-btn {
+  position: relative;
+  border: none;
+  border-radius: 20px;
+  padding: 10px;
+  background: linear-gradient(145deg, #fff, #f0f0f0);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.speech-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+}
+.speech-btn:active {
+  transform: scale(1.1);
+  background: linear-gradient(145deg, #e0f7ff, #ffe0f0);
+}
+.speech-btn img {
+  width: 100px;
+  height: 100px;
+  border-radius: 15px;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+.speech-btn span {
+  display: block;
+  margin-top: 5px;
+  font-weight: bold;
+}
+
+.delete-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.add-form {
+  background: rgba(255,255,255,0.8);
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+.add-form input[type="text"], .add-form button {
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  width: 90%;
+}
+.add-form button {
+  background: #22d3ee;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+.add-form button:hover {
+  transform: scale(1.05);
+}
+
+.file-input { display: none; }
+.file-label {
+  display: inline-block;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background: #38bdf8;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+#preview {
+  margin: 10px 0;
+  max-width: 100px;
+  border-radius: 10px;
+  display: none;
+}
+</style>
+</head>
+<body>
+<h1>🗣️ แอปช่วยพูด</h1>
+
+<div class="button-grid" id="buttonGrid">
+  <button class="speech-btn" onclick="speak('สวัสดี')">
+    <img src="https://i.postimg.cc/43Vmrynn/1755590954026.jpg"><span>สวัสดี</span>
+  </button>
+  <button class="speech-btn" onclick="speak('ขอบคุณ')">
+    <img src="https://i.postimg.cc/HnZxQ7vv/1755590954073.jpg"><span>ขอบคุณ</span>
+  </button>
+  <button class="speech-btn" onclick="speak('หิวข้าว')">
+    <img src="https://i.postimg.cc/QdV6kGCf/1755590953971.jpg"><span>หิวข้าว</span>
+  </button>
+  <button class="speech-btn" onclick="speak('หิวน้ำ')">
+    <img src="https://i.postimg.cc/c4zCCwnr/1755590953918.jpg"><span>หิวน้ำ</span>
+  </button>
+  <button class="speech-btn" onclick="speak('อยากเข้าห้องน้ำ')">
+    <img src="https://i.postimg.cc/jd1XXbcg/Screenshot-2025-08-19-17-39-39-903-com-miui-gallery-edit.jpg"><span>อยากเข้าห้องน้ำ</span>
+  </button>
+  <button class="speech-btn" onclick="speak('ง่วงนอน')">
+    <img src="https://i.postimg.cc/v8JHdbFV/file-00000000000061f7a3509f32dfcc86f5.png"><span>ง่วงนอน</span>
+  </button>
+</div>
+
+<div class="add-form">
+  <h3>➕ เพิ่มปุ่มใหม่</h3>
+  <label for="imgInput" class="file-label">📷 เพิ่มรูปภาพ</label>
+  <input type="file" id="imgInput" class="file-input" accept="image/*">
+  <br>
+  <img id="preview" alt="ตัวอย่างรูป">
+  <br>
+  <input type="text" id="textInput" placeholder="ใส่ข้อความที่จะพูด"><br>
+  <button onclick="addCustomButton()">เพิ่มปุ่ม</button>
+  <button onclick="animateAndSpeak(document.getElementById('textInput').value)">พูดข้อความ</button>
+</div>
+
+<script>
+function speak(text) {
+  if(!text) return;
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'th-TH';
+  speechSynthesis.speak(utterance);
+}
+
+// เอฟเฟกต์ปุ่มเด้ง
+function animateBtn(btn){
+  btn.style.transform = "scale(1.1)";
+  setTimeout(()=>{ btn.style.transform="scale(1)"; },200);
+}
+
+function animateAndSpeak(text){
+  if(!text) return;
+  const btns = document.querySelectorAll('.speech-btn');
+  animateBtn(btns[btns.length-1]);
+  speak(text);
+}
+
+// preview รูป
+document.getElementById('imgInput').addEventListener('change', function(){
+  const file = this.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const preview = document.getElementById('preview');
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+});
+
+// เพิ่มปุ่มใหม่ + ลบ + เอฟเฟกต์
+function addCustomButton() {
+  const fileInput = document.getElementById('imgInput');
+  const text = document.getElementById('textInput').value;
+  if (!text) { alert("กรุณาใส่ข้อความ"); return; }
+
+  const btn = document.createElement('button');
+  btn.className = 'speech-btn';
+
+  if(fileInput.files.length > 0){
+    const reader = new FileReader();
+    reader.onload = function(e){
+      btn.innerHTML = `<img src="${e.target.result}"><span>${text}</span>`;
+      btn.onclick = () => { animateBtn(btn); speak(text); };
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'delete-btn';
+      delBtn.innerHTML = "✖";
+      delBtn.onclick = (ev)=>{ ev.stopPropagation(); btn.remove(); };
+      btn.appendChild(delBtn);
+
+      document.getElementById('buttonGrid').appendChild(btn);
+    }
+    reader.readAsDataURL(fileInput.files[0]);
+  } else {
+    btn.innerHTML = `<span>${text}</span>`;
+    btn.onclick = () => { animateBtn(btn); speak(text); };
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'delete-btn';
+    delBtn.innerHTML = "✖";
+    delBtn.onclick = (ev)=>{ ev.stopPropagation(); btn.remove(); };
+    btn.appendChild(delBtn);
+
+    document.getElementById('buttonGrid').appendChild(btn);
+  }
+
+  fileInput.value = "";
+  document.getElementById('textInput').value = "";
+  document.getElementById('preview').style.display = "none";
+}
+
+// Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js')
+    .then(()=>console.log('SW registered'))
+    .catch(err=>console.error(err));
+}
+</script>
+</body>
+</html>
