@@ -1,25 +1,13 @@
-const cacheName = 'speech-app-cache-v1';
-const assetsToCache = [
-  './index.html',
-  './manifest.json',
-  './service-worker.js',
-  'https://i.postimg.cc/43Vmrynn/1755590954026.jpg',
-  'https://i.postimg.cc/HnZxQ7vv/1755590954073.jpg',
-  'https://i.postimg.cc/QdV6kGCf/1755590953971.jpg',
-  'https://i.postimg.cc/c4zCCwnr/1755590953918.jpg',
-  'https://i.postimg.cc/KzWrJ4Wj/1755590953378.jpg',
-  'https://i.postimg.cc/v8JHdbFV/file-00000000000061f7a3509f32dfcc86f5.png',
-  'https://i.postimg.cc/26Mr2gBQ/1755595619395.png'
+const CACHE_NAME = 'speech-app-cache-v1';
+const urlsToCache = [
+  'index.html',
+  'manifest.json'
 ];
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(cacheName).then(cache => cache.addAll(assetsToCache))
-  );
+self.addEventListener('install', event=>{
+  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(urlsToCache)));
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then(response => response || fetch(e.request))
-  );
+self.addEventListener('fetch', event=>{
+  event.respondWith(caches.match(event.request).then(resp=>resp || fetch(event.request)));
 });
