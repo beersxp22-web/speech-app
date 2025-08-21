@@ -7,33 +7,27 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#22d3ee">
 <style>
+/* --- สไตล์เหมือนเดิม --- */
 body { font-family: sans-serif; text-align:center; padding:20px; background: linear-gradient(135deg,#a5f3fc,#fbcfe8);}
 h1 { margin-bottom:20px; font-size:2.2em; font-weight:bold;
      background: linear-gradient(90deg,#22d3ee,#f472b6,#facc15);
      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
      text-shadow:2px 2px 5px rgba(0,0,0,0.2); animation:hueShift 5s infinite linear;}
 @keyframes hueShift {0%{filter:hue-rotate(0deg);}100%{filter:hue-rotate(360deg);}}
-
 .button-grid {display:grid; grid-template-columns:repeat(2,1fr); gap:15px; margin-bottom:20px;}
 .speech-btn {position:relative; border:none; border-radius:20px; padding:10px; background:white;
              box-shadow:0 4px 6px rgba(0,0,0,0.2); transition: transform 0.2s, box-shadow 0.2s, background 0.4s; cursor:pointer;}
 .speech-btn:hover {transform:scale(1.05); box-shadow:0 6px 12px rgba(0,0,0,0.3);}
 .speech-btn img {width:100px;height:100px;border-radius:15px; object-fit:cover;}
 .speech-btn span {display:block; margin-top:5px; font-weight:bold;}
-.speech-btn.active {transform: scale(1.2); background: linear-gradient(270deg,#ff3cac,#784ba0,#2b86c5,#ff3cac); background-size:600% 600%; animation: gradientShift 1s ease infinite; box-shadow:0 8px 20px rgba(0,0,0,0.3);}
-@keyframes gradientShift {0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
-
 .add-form {background: rgba(255,255,255,0.8); padding:15px; border-radius:15px; box-shadow:0 4px 6px rgba(0,0,0,0.2);}
 .add-form input[type="text"], .add-form button {margin:8px 0; padding:10px; border-radius:10px; border:1px solid #ccc; width:90%;}
 .add-form button {background:#22d3ee;color:white;border:none;font-weight:bold;cursor:pointer; transition:transform 0.2s, background 0.2s;}
-.add-form button.active {transform:scale(1.1); background:linear-gradient(135deg,#22d3ee,#f472b6);}
+.add-form button:hover {transform:scale(1.05); background:linear-gradient(135deg,#22d3ee,#f472b6);}
 .file-input{display:none;}
 .file-label{display:inline-block;padding:10px 15px;border-radius:10px;background:#38bdf8;color:white;font-weight:bold;cursor:pointer;margin-bottom:10px;}
 #preview{margin:10px 0; max-width:100px; border-radius:10px; display:none;}
-
 .delete-btn {position:absolute; top:5px; right:5px; background:red; color:white; border:none; border-radius:50%; width:25px; height:25px; font-weight:bold; cursor:pointer; z-index:20;}
-
-/* กล่องข้อความรวม */
 #messageBox {
   position:relative;
   background: linear-gradient(270deg,#ff3cac,#784ba0,#2b86c5,#ff3cac);
@@ -43,7 +37,7 @@ h1 { margin-bottom:20px; font-size:2.2em; font-weight:bold;
   border-radius:20px;
   box-shadow:0 6px 12px rgba(0,0,0,0.3);
   min-height:60px;
-  margin-bottom:15px; /* เลื่อนมาข้างบน */
+  margin-bottom:15px;
   overflow-x:auto;
   color:white;
   font-weight:bold;
@@ -55,47 +49,45 @@ h1 { margin-bottom:20px; font-size:2.2em; font-weight:bold;
 <body>
 <h1>🗣️ ผู้ช่วยพูด</h1>
 
-<!-- กล่องแสดงข้อความรวม -->
 <div id="messageBox">
-  <div id="messageContent"></div>
+  <div id="messageContent" style="padding-right:70px; overflow-x:auto;"></div>
+  <button id="sendBtn" style="
+      position:absolute;
+      bottom:10px;
+      right:10px;
+      padding:8px 14px;
+      border:none;
+      border-radius:20px;
+      background:linear-gradient(135deg,#22d3ee,#f472b6);
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+      box-shadow:0 4px 6px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.4s;
+  ">ส่ง</button>
 </div>
 
 <div id="mainPage">
   <div class="button-grid" id="buttonGrid">
-    <button class="speech-btn" onclick="goNextRecursive('สวัสดี',[
-      {text:'ตอนเช้า', next:['กินข้าวยัง?','ออกไปเดินเล่น']},
-      {text:'ตอนเที่ยง', next:['ทานข้าวหรือยัง?','พักผ่อนสักหน่อย']},
-      {text:'ตอนเย็น', next:['กลับบ้านแล้ว','ไปเที่ยวไหม?']}
-    ])">
+    <button class="speech-btn" onclick="addMessage('สวัสดี')">
       <img src="https://i.postimg.cc/43Vmrynn/1755590954026.jpg"><span>สวัสดี</span>
     </button>
-    <button class="speech-btn" onclick="goNextRecursive('ขอบคุณ',[
-      {text:'ครับ', next:['ยินดีครับ','ไม่เป็นไรครับ','ด้วยความยินดีครับ','ด้วยความเต็มใจครับ']},
-      {text:'ค่ะ', next:['ยินดีค่ะ','ไม่เป็นไรค่ะ','ด้วยความยินดีค่ะ','ด้วยความเต็มใจค่ะ']}
-    ])">
+    <button class="speech-btn" onclick="addMessage('ขอบคุณ')">
       <img src="https://i.postimg.cc/HnZxQ7vv/1755590954073.jpg"><span>ขอบคุณ</span>
     </button>
-    <button class="speech-btn" onclick="goNextRecursive('หิวข้าว',[
-      {text:'🍛 ข้าวผัด', next:['ใส่ไข่','ใส่หมู']},
-      {text:'🍲 กระเพรา', next:['ใส่ไก่','ใส่หมู']},
-      {text:'🥚 ไข่ดาว', next:['ทอดกรอบ','สุกกลาง']}
-    ])">
+    <button class="speech-btn" onclick="addMessage('หิวข้าว')">
       <img src="https://i.postimg.cc/QdV6kGCf/1755590953971.jpg"><span>หิวข้าว</span>
     </button>
-    <button class="speech-btn" onclick="goNextRecursive('หิวน้ำ',['🥤 น้ำเปล่า','🧃 น้ำผลไม้'])">
+    <button class="speech-btn" onclick="addMessage('หิวน้ำ')">
       <img src="https://i.postimg.cc/c4zCCwnr/1755590953918.jpg"><span>หิวน้ำ</span>
     </button>
-    <button class="speech-btn" onclick="goNextRecursive('อยากไป',['🏫 โรงเรียน','🏠 บ้าน','🏥 โรงพยาบาล'])">
+    <button class="speech-btn" onclick="addMessage('อยากไป')">
       <img src="https://i.postimg.cc/jd1XXbcg/Screenshot-2025-08-19-17-39-39-903-com-miui-gallery-edit.jpg"><span>อยากไป</span>
     </button>
-    <button class="speech-btn" onclick="goNextRecursive('ง่วงนอน',['🛌 ตอนนี้','⏰ อีกสักพัก','💤 จะไปนอนแล้วนะ'])">
+    <button class="speech-btn" onclick="addMessage('ง่วงนอน')">
       <img src="https://i.postimg.cc/v8JHdbFV/file-00000000000061f7a3509f32dfcc86f5.png"><span>ง่วงนอน</span>
     </button>
   </div>
-</div>
-
-<div id="subPage" style="display:none;">
-  <div class="button-grid" id="subGrid"></div>
 </div>
 
 <div class="add-form">
@@ -105,64 +97,71 @@ h1 { margin-bottom:20px; font-size:2.2em; font-weight:bold;
   <img id="preview" alt="ตัวอย่างรูป"><br>
   <input type="text" id="textInput" placeholder="ใส่ข้อความที่จะพูด"><br>
   <button id="addBtn">เพิ่มปุ่ม</button>
-  <button id="speakBtn">พูดข้อความ</button>
 </div>
 
 <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3"></audio>
 
 <script>
-let mainPage=document.getElementById('mainPage');
-let subPage=document.getElementById('subPage');
-let subGrid=document.getElementById('subGrid');
-let clickSound=document.getElementById('clickSound');
-let selectedText = [];
+let clickSound = document.getElementById('clickSound');
+let messageContent = document.getElementById('messageContent');
 
 function speak(text){
   if(!text) return;
-  const utter=new SpeechSynthesisUtterance(text);
-  utter.lang='th-TH';
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'th-TH';
   speechSynthesis.speak(utter);
   clickSound.play();
 }
 
-function goNextRecursive(main, options){
-    mainPage.style.display='none';
-    subPage.style.display='block';
-    subGrid.innerHTML='';
-
-    options.forEach(opt=>{
-        let btn=document.createElement('button');
-        btn.className='speech-btn';
-        let text, next;
-        if(typeof opt === 'string'){
-            text = opt;
-            next = null;
-        } else {
-            text = opt.text;
-            next = opt.next;
-        }
-        btn.innerHTML=`<span>${text}</span>`;
-        btn.onclick=()=>{
-            selectedText.push(text);
-            if(next && next.length>0){
-                goNextRecursive(main + ' ' + text, next);
-            } else {
-                // เอา main แค่คำแรกไม่เบิ้ล
-                const firstWord = main.split(' ')[0];
-                const fullText = [firstWord, ...selectedText].join(' ');
-                speak(fullText);
-                const msg = document.getElementById('messageContent');
-                msg.innerText = fullText;
-                msg.scrollLeft = msg.scrollWidth;
-
-                subPage.style.display='none';
-                mainPage.style.display='block';
-                selectedText = [];
-            }
-        };
-        subGrid.appendChild(btn);
-    });
+function addMessage(text){
+  messageContent.innerText += (messageContent.innerText ? ' ' : '') + text;
+  messageContent.scrollLeft = messageContent.scrollWidth;
 }
+
+// ปุ่มส่ง
+const sendBtn = document.getElementById('sendBtn');
+sendBtn.addEventListener('click', function(){
+  const text = messageContent.innerText;
+  if(!text) return;
+  speak(text);
+  messageContent.innerText='';
+});
+
+// ปุ่มสร้างใหม่ + localStorage
+function createButton(text, imgData){
+    const btn = document.createElement('button');
+    btn.className = 'speech-btn';
+    btn.onclick = () => addMessage(text);
+    if(imgData) btn.innerHTML = `<img src="${imgData}"><span>${text}</span>`;
+    else btn.innerHTML = `<span>${text}</span>`;
+    const del = document.createElement('button');
+    del.className='delete-btn';
+    del.innerText='✖';
+    del.onclick=(ev)=>{
+        ev.stopPropagation();
+        btn.remove();
+        removeButtonFromStorage(text,imgData);
+    };
+    btn.appendChild(del);
+    document.getElementById('buttonGrid').appendChild(btn);
+}
+
+// localStorage functions
+function saveButton(text,imgData){
+    let buttons = JSON.parse(localStorage.getItem('customButtons')||'[]');
+    buttons.push({text,img:imgData});
+    localStorage.setItem('customButtons', JSON.stringify(buttons));
+}
+function removeButtonFromStorage(text,imgData){
+    let buttons = JSON.parse(localStorage.getItem('customButtons')||'[]');
+    buttons = buttons.filter(b=>!(b.text===text && b.img===imgData));
+    localStorage.setItem('customButtons', JSON.stringify(buttons));
+}
+function loadButtons(){
+    let buttons = JSON.parse(localStorage.getItem('customButtons')||'[]');
+    buttons.forEach(b=>createButton(b.text,b.img));
+}
+window.addEventListener('load',loadButtons);
 
 // เพิ่มปุ่มเอง
 document.getElementById('imgInput').addEventListener('change',function(){
@@ -176,53 +175,32 @@ document.getElementById('imgInput').addEventListener('change',function(){
     reader.readAsDataURL(file);
   }
 });
-
 document.getElementById('addBtn').addEventListener('click',function(){
-  const text=document.getElementById('textInput').value;
+  const text = document.getElementById('textInput').value;
   if(!text){ alert('กรุณาใส่ข้อความ'); return; }
-  const btn=document.createElement('button');
-  btn.className='speech-btn';
-  const file=document.getElementById('imgInput').files[0];
-
+  const file = document.getElementById('imgInput').files[0];
   if(file){
-    const reader=new FileReader();
-    reader.onload=function(e){
-      btn.innerHTML=`<img src="${e.target.result}"><span>${text}</span>`;
-      btn.onclick=()=>{ speak(text); };
-      const del=document.createElement('button'); del.className='delete-btn'; del.innerText='✖';
-      del.onclick=(ev)=>{ ev.stopPropagation(); btn.remove(); };
-      btn.appendChild(del);
-      document.getElementById('buttonGrid').appendChild(btn);
+    const reader = new FileReader();
+    reader.onload = function(e){
+      const imgData = e.target.result;
+      createButton(text,imgData);
+      saveButton(text,imgData);
     }
     reader.readAsDataURL(file);
   }else{
-    btn.innerHTML=`<span>${text}</span>`;
-    btn.onclick=()=>{ speak(text); };
-    const del=document.createElement('button'); del.className='delete-btn'; del.innerText='✖';
-    del.onclick=(ev)=>{ ev.stopPropagation(); btn.remove(); };
-    btn.appendChild(del);
-    document.getElementById('buttonGrid').appendChild(btn);
+    createButton(text,null);
+    saveButton(text,null);
   }
-
   document.getElementById('imgInput').value='';
   document.getElementById('textInput').value='';
   document.getElementById('preview').style.display='none';
 });
 
-// พูดข้อความเอง
-document.getElementById('speakBtn').addEventListener('click',function(){
-  const text=document.getElementById('textInput').value;
-  if(!text) return;
-  speak(text);
-});
-
-// ลงทะเบียน Service Worker
+// ลงทะเบียน SW
 if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(reg => console.log('Service Worker registered:', reg))
-      .catch(err => console.log('Service Worker registration failed:', err));
-  });
+  navigator.serviceWorker.register('./service-worker.js')
+    .then(reg => console.log('SW registered:',reg))
+    .catch(err => console.log('SW failed:',err));
 }
 </script>
 </body>
